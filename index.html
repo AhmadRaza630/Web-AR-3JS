@@ -134,6 +134,7 @@
       background: radial-gradient(circle at top right, rgba(248, 250, 252, 0.25), transparent 65%);
       opacity: 0;
       transition: opacity 0.2s ease-out;
+      pointer-events: none;
     }
     .card:hover::before {
       opacity: 1;
@@ -284,9 +285,9 @@
             </div>
             <div class="price">Rs 850 (visual demo)</div>
             <div class="card-actions">
-              <a href="arscreen.html" class="ar-btn">
+              <button class="ar-btn" onclick="window.location.href='arscreen.html'">
                 <span>⬈</span> View Burger in AR
-              </a>
+              </button>
             </div>
           </article>
 
@@ -301,9 +302,9 @@
             </div>
             <div class="price">Rs 1290 (visual demo)</div>
             <div class="card-actions">
-              <a href="arscreen.html" class="ar-btn">
+              <button class="ar-btn" onclick="window.location.href='arscreen.html'">
                 <span>⬈</span> View Pizza in AR
-              </a>
+              </button>
             </div>
           </article>
 
@@ -318,9 +319,9 @@
             </div>
             <div class="price">Rs 490 (visual demo)</div>
             <div class="card-actions">
-              <a href="arscreen.html" class="ar-btn">
+              <button class="ar-btn" onclick="window.location.href='arscreen.html'">
                 <span>⬈</span> View Fries in AR
-              </a>
+              </button>
             </div>
           </article>
         </div>
