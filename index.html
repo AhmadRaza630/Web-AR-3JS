@@ -585,11 +585,38 @@
     document.getElementById('cart-btn').addEventListener('click', openCart);
     document.getElementById('cart-close').addEventListener('click', closeCart);
     document.getElementById('cart-overlay').addEventListener('click', closeCart);
-    document.getElementById('place-order-btn').addEventListener('click', function () {
-      if (getCart().length === 0) return;
-      alert('Order placed! Thank you.');
-      saveCart([]);
-      closeCart();
+    document.getElementById('place-order-btn').addEventListener('click', async function () {
+      const cart = getCart();
+      if (!cart.length) return;
+
+      const tableNumber = prompt('Table number enter karein (e.g. 5, A2):');
+      if (!tableNumber) {
+        return;
+      }
+
+      const total = cart.reduce((sum, i) => sum + (i.price || 0), 0);
+
+      try {
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tableNumber,
+            items: cart,
+            total
+          })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+          throw new Error(data.message || 'Order failed');
+        }
+        alert('Order placed for table ' + tableNumber + '.');
+        saveCart([]);
+        closeCart();
+      } catch (err) {
+        alert('Order place nahi ho saka. Thori dair baad try karein.');
+        console.error(err);
+      }
     });
     updateCartUI();
   </script>
