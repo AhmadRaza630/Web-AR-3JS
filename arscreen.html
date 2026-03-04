@@ -88,6 +88,19 @@
       background: #111827;
       color: #e5e7eb;
     }
+    #add-to-cart-btn {
+      background: linear-gradient(to right, #f97316, #ea580c);
+      color: #fff;
+    }
+    #add-to-cart-btn.added {
+      background: #16a34a;
+    }
+    .add-to-cart-msg {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #86efac;
+      text-align: center;
+    }
     footer {
       padding: 8px 0 12px;
       text-align: center;
@@ -129,7 +142,11 @@
       <button id="reset-btn">
         Reset view
       </button>
+      <button id="add-to-cart-btn">
+        Add to Cart
+      </button>
     </div>
+    <p class="add-to-cart-msg" id="add-to-cart-msg" style="display: none;"></p>
   </div>
 
   <footer>
@@ -137,11 +154,34 @@
   </footer>
 
   <script>
+    const CART_KEY = 'foodar_cart';
+    const ITEMS = {
+      burger: { id: 'burger', name: 'Cheese Burger', price: 850, emoji: '🍔' },
+      pizza:  { id: 'pizza',  name: 'Loaded Pizza',  price: 1290, emoji: '🍕' },
+      fries: { id: 'fries',  name: 'Crispy Fries',  price: 490, emoji: '🍟' }
+    };
+    const params = new URLSearchParams(window.location.search);
+    const itemKey = (params.get('item') || 'burger').toLowerCase();
+    const currentItem = ITEMS[itemKey] || ITEMS.burger;
+
     const viewer = document.getElementById('viewer');
     const arBtn = document.getElementById('ar-btn');
     const resetBtn = document.getElementById('reset-btn');
+    const addToCartBtn = document.getElementById('add-to-cart-btn');
+    const addToCartMsg = document.getElementById('add-to-cart-msg');
 
-    // Button se AR trigger
+    function getCart() {
+      try {
+        const raw = localStorage.getItem(CART_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (_) {
+        return [];
+      }
+    }
+    function saveCart(items) {
+      localStorage.setItem(CART_KEY, JSON.stringify(items));
+    }
+
     arBtn.addEventListener('click', () => {
       if (viewer.canActivateAR) {
         viewer.activateAR();
@@ -150,10 +190,24 @@
       }
     });
 
-    // Camera reset
     resetBtn.addEventListener('click', () => {
       viewer.cameraOrbit = 'auto';
       viewer.cameraTarget = 'auto';
+    });
+
+    addToCartBtn.addEventListener('click', () => {
+      const cart = getCart();
+      cart.push({ id: currentItem.id, name: currentItem.name, price: currentItem.price, emoji: currentItem.emoji });
+      saveCart(cart);
+      addToCartBtn.textContent = 'Added!';
+      addToCartBtn.classList.add('added');
+      addToCartMsg.textContent = currentItem.emoji + ' ' + currentItem.name + ' cart me add ho gaya.';
+      addToCartMsg.style.display = 'block';
+      setTimeout(() => {
+        addToCartBtn.textContent = 'Add to Cart';
+        addToCartBtn.classList.remove('added');
+        addToCartMsg.style.display = 'none';
+      }, 2000);
     });
   </script>
 </body>
