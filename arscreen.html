@@ -122,7 +122,7 @@
     <!-- Yahan apna model.glb / model.usdz use karein -->
     <model-viewer
       id="viewer"
-      src="mug.glb"
+      src="Burger.glb"
       ios-src="mug.usdz"
       ar
       ar-modes="scene-viewer quick-look webxr"
@@ -156,9 +156,9 @@
   <script>
     const CART_KEY = 'foodar_cart';
     const ITEMS = {
-      burger: { id: 'burger', name: 'Cheese Burger', price: 850, emoji: '🍔' },
-      pizza:  { id: 'pizza',  name: 'Loaded Pizza',  price: 1290, emoji: '🍕' },
-      fries: { id: 'fries',  name: 'Crispy Fries',  price: 490, emoji: '🍟' }
+      burger: { id: 'burger', name: 'Cheese Burger', price: 850, emoji: '🍔', model: 'Burger.glb' },
+      pizza:  { id: 'pizza',  name: 'Loaded Pizza',  price: 1290, emoji: '🍕', model: 'Pizza.glb' },
+      fries: { id: 'fries',  name: 'Crispy Fries',  price: 490, emoji: '🍟', model: 'Fries.glb' }
     };
     const params = new URLSearchParams(window.location.search);
     const itemKey = (params.get('item') || 'burger').toLowerCase();
@@ -169,6 +169,11 @@
     const resetBtn = document.getElementById('reset-btn');
     const addToCartBtn = document.getElementById('add-to-cart-btn');
     const addToCartMsg = document.getElementById('add-to-cart-msg');
+
+    // Select correct 3D model based on URL item (burger/pizza/fries)
+    if (currentItem && currentItem.model) {
+      viewer.src = currentItem.model;
+    }
 
     function getCart() {
       try {
