@@ -392,9 +392,27 @@ app.get('/admin', (req, res) => {
       margin-bottom: 4px;
       color: #111827;
     }
+    .watermark {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      width: 44px;
+      height: 44px;
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .watermark img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
   </style>
 </head>
 <body>
+  <div class="watermark" aria-hidden="true">
+    <img src="/Brand.png" alt="">
+  </div>
   <div class="layout">
     <aside class="sidebar">
       <div class="sidebar-logo">
