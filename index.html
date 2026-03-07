@@ -2,93 +2,227 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Food AR Home</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Grand Bistro AR – Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       min-height: 100vh;
-      display: flex;
-      align-items: stretch;
-      justify-content: center;
-      background:
-        radial-gradient(circle at top, #4f46e5 0, transparent 55%),
-        radial-gradient(circle at bottom, #f97316 0, transparent 55%),
-        #020617;
-      color: #f9fafb;
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 35%, #020617 100%);
+      color: #f1f5f9;
+      padding-bottom: 80px;
     }
+
+    /* Top bar */
+    .top-bar {
+      text-align: center;
+      padding: 10px 16px;
+      background: linear-gradient(90deg, #1e3a5f 0%, #334155 50%, #c2410c 100%);
+      color: #cbd5e1;
+      font-size: 13px;
+    }
+
     .page {
-      width: 100%;
-      max-width: 1100px;
-      padding: 20px 16px 32px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 12px 16px 24px;
     }
+
+    /* Header */
     header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 0;
+    }
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #d4af37, #b8860b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      color: #0f172a;
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+    }
+    .brand-text {
+      font-size: 20px;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+
+    /* Promo banner */
+    .promo-banner {
+      border-radius: 20px;
+      padding: 20px 16px;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid rgba(212, 175, 55, 0.35);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
+      margin-bottom: 8px;
+      min-height: 120px;
     }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .promo-text-wrap {
+      flex: 1;
+      min-width: 0;
     }
-    .brand-logo {
-      width: 40px;
-      height: 40px;
+    .promo-label { font-size: 12px; color: #94a3b8; }
+    .promo-offer { font-size: 26px; font-weight: 800; color: #fff; line-height: 1.2; margin: 4px 0 2px; }
+    .promo-sub { font-size: 12px; color: #94a3b8; margin-bottom: 10px; }
+    .promo-btn {
+      display: inline-block;
+      padding: 10px 18px;
       border-radius: 999px;
-      background: conic-gradient(from 160deg, #f97316, #22c55e, #4f46e5, #f97316);
+      border: 2px solid #d4af37;
+      background: transparent;
+      color: #d4af37;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .promo-btn:hover { background: rgba(212, 175, 55, 0.15); }
+    .promo-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 16px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .carousel-dots span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #475569;
+    }
+    .carousel-dots span.active { background: #d4af37; width: 8px; height: 8px; }
+
+    /* Category tabs */
+    .categories {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 16px 0;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .categories::-webkit-scrollbar { display: none; }
+    .cat-btn {
+      flex-shrink: 0;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid #334155;
+      background: #1e293b;
+      color: #e2e8f0;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .cat-btn.active, .cat-btn.real:hover {
+      border-color: #d4af37;
+      color: #d4af37;
+    }
+    .cat-btn.dummy { opacity: 0.7; cursor: default; }
+
+    /* Product grid */
+    .product-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      padding-bottom: 24px;
+    }
+    .product-card {
+      background: #1e293b;
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .product-card.real { border-color: rgba(212, 175, 55, 0.3); }
+    .card-body { padding: 12px; flex: 1; display: flex; flex-direction: column; }
+    .card-icon { font-size: 18px; margin-bottom: 4px; }
+    .card-title { font-size: 15px; font-weight: 600; color: #f1f5f9; margin: 0 0 4px; }
+    .card-desc { font-size: 11px; color: #94a3b8; margin: 0 0 8px; line-height: 1.35; }
+    .card-price { font-size: 14px; font-weight: 600; color: #f1f5f9; margin-bottom: 8px; }
+    .card-img-wrap {
+      position: relative;
+      height: 100px;
+      background: #334155;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 18px;
-      color: #020617;
+      overflow: hidden;
     }
-    .brand-text-title {
-      font-size: 20px;
+    .card-img-wrap img.card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .card-badge {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #d4af37;
+      background: rgba(15, 23, 42, 0.9);
+      color: #d4af37;
+      font-size: 10px;
       font-weight: 600;
     }
-    .brand-text-sub {
+    .card-ar-btn {
+      display: block;
+      width: 100%;
+      padding: 10px 12px;
+      margin-top: auto;
+      border-radius: 999px;
+      border: 2px solid #d4af37;
+      background: transparent;
+      color: #d4af37;
       font-size: 12px;
-      color: #9ca3af;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
     }
+    .card-ar-btn:hover { background: rgba(212, 175, 55, 0.15); }
+    .product-card.dummy .card-ar-btn { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+    /* Cart */
     .header-right {
+      margin-left: auto;
       display: flex;
       align-items: center;
-      gap: 10px;
-    }
-    .tag {
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      font-size: 11px;
-      color: #e5e7eb;
+      gap: 8px;
     }
     .cart-btn {
       position: relative;
       width: 44px;
       height: 44px;
       border-radius: 12px;
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.8);
       color: #f9fafb;
       font-size: 20px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-    .cart-btn:hover {
-      background: rgba(30, 41, 59, 0.95);
     }
     .cart-badge {
       position: absolute;
@@ -106,9 +240,9 @@
       justify-content: center;
       padding: 0 4px;
     }
-    .cart-badge.hidden {
-      display: none;
-    }
+    .cart-badge.hidden { display: none; }
+
+    /* Cart drawer */
     .cart-overlay {
       position: fixed;
       inset: 0;
@@ -118,10 +252,7 @@
       visibility: hidden;
       transition: opacity 0.2s, visibility 0.2s;
     }
-    .cart-overlay.open {
-      opacity: 1;
-      visibility: visible;
-    }
+    .cart-overlay.open { opacity: 1; visibility: visible; }
     .cart-drawer {
       position: fixed;
       top: 0;
@@ -136,11 +267,8 @@
       flex-direction: column;
       transform: translateX(100%);
       transition: transform 0.25s ease-out;
-      box-shadow: -8px 0 24px rgba(0, 0, 0, 0.4);
     }
-    .cart-drawer.open {
-      transform: translateX(0);
-    }
+    .cart-drawer.open { transform: translateX(0); }
     .cart-drawer-header {
       padding: 16px 20px;
       border-bottom: 1px solid rgba(148, 163, 184, 0.3);
@@ -148,10 +276,7 @@
       align-items: center;
       justify-content: space-between;
     }
-    .cart-drawer-title {
-      font-size: 18px;
-      font-weight: 600;
-    }
+    .cart-drawer-title { font-size: 18px; font-weight: 600; }
     .cart-close {
       width: 36px;
       height: 36px;
@@ -162,17 +287,8 @@
       font-size: 18px;
       cursor: pointer;
     }
-    .cart-drawer-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-    }
-    .cart-empty {
-      text-align: center;
-      color: #94a3b8;
-      padding: 24px 0;
-      font-size: 14px;
-    }
+    .cart-drawer-body { flex: 1; overflow-y: auto; padding: 16px; }
+    .cart-empty { text-align: center; color: #94a3b8; padding: 24px 0; font-size: 14px; }
     .cart-item {
       display: flex;
       align-items: center;
@@ -181,16 +297,7 @@
       padding: 12px 0;
       border-bottom: 1px solid rgba(148, 163, 184, 0.2);
     }
-    .cart-item:last-child {
-      border-bottom: none;
-    }
-    .cart-item-name {
-      font-weight: 500;
-    }
-    .cart-item-price {
-      color: #f97316;
-      font-weight: 600;
-    }
+    .cart-item-price { color: #d4af37; font-weight: 600; }
     .cart-drawer-footer {
       padding: 16px 20px;
       border-top: 1px solid rgba(148, 163, 184, 0.3);
@@ -198,341 +305,224 @@
       flex-direction: column;
       gap: 12px;
     }
-    .cart-total {
-      display: flex;
-      justify-content: space-between;
-      font-size: 16px;
-      font-weight: 600;
-    }
+    .cart-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 600; }
     .place-order-btn {
       width: 100%;
       padding: 14px 20px;
       border-radius: 12px;
       border: none;
-      background: linear-gradient(to right, #22c55e, #16a34a);
-      color: #022c22;
+      background: linear-gradient(to right, #d4af37, #b8860b);
+      color: #0f172a;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
     }
-    .place-order-btn:hover {
-      opacity: 0.95;
+    .place-order-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Bottom nav */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 480px;
+      margin: 0 auto;
+      height: 64px;
+      background: #1e293b;
+      border-top: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 20px 20px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 8px 0;
+      z-index: 50;
     }
-    .place-order-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    main {
-      display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-      gap: 24px;
-    }
-    @media (max-width: 768px) {
-      main {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-    .hero-text {
+    .nav-item {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-    }
-    .hero-title {
-      font-size: clamp(26px, 6vw, 34px);
-      line-height: 1.15;
-      font-weight: 700;
-    }
-    .hero-title span {
-      color: #facc15;
-    }
-    .hero-sub {
-      font-size: 14px;
-      color: #e5e7eb;
-      max-width: 460px;
-    }
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .chip {
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(55, 65, 81, 0.9);
+      align-items: center;
+      gap: 4px;
+      color: #94a3b8;
       font-size: 11px;
-      color: #d1d5db;
-    }
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 14px;
-      margin-top: 10px;
-    }
-    .card {
-      position: relative;
-      border-radius: 18px;
-      padding: 14px 12px 12px;
-      background: radial-gradient(circle at top left, rgba(248, 250, 252, 0.12), rgba(15, 23, 42, 0.95));
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.7);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at top right, rgba(248, 250, 252, 0.25), transparent 65%);
-      opacity: 0;
-      transition: opacity 0.2s ease-out;
-      pointer-events: none;
-    }
-    .card:hover::before {
-      opacity: 1;
-    }
-    .card-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .card-emoji {
-      font-size: 20px;
-    }
-    .card-title {
-      font-size: 15px;
-      font-weight: 600;
-    }
-    .card-sub {
-      font-size: 12px;
-      color: #cbd5f5;
-    }
-    .badge {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: rgba(22, 163, 74, 0.18);
-      border: 1px solid rgba(34, 197, 94, 0.7);
-      color: #bbf7d0;
-    }
-    .price {
-      font-size: 13px;
-      color: #f97316;
-      font-weight: 600;
-      margin-top: 6px;
-    }
-    .card-actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 6px;
-      gap: 8px;
-    }
-    .ar-btn {
-      flex: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(to right, #22c55e, #16a34a);
-      color: #022c22;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
       text-decoration: none;
-      white-space: nowrap;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px 12px;
+      font-family: inherit;
     }
-    .ar-btn span {
-      font-size: 15px;
-    }
-    .note {
-      font-size: 11px;
-      color: #9ca3af;
-      margin-top: 4px;
-    }
-    .right-panel {
-      border-radius: 22px;
-      padding: 16px 14px 14px;
-      background: radial-gradient(circle at top left, rgba(129, 140, 248, 0.7), transparent 65%), rgba(15, 23, 42, 0.96);
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.9);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .right-title {
-      font-size: 15px;
-      font-weight: 600;
-    }
-    .right-sub {
-      font-size: 12px;
-      color: #e5e7eb;
-    }
-    .steps {
-      margin-top: 8px;
-      font-size: 12px;
-      color: #e5e7eb;
-    }
-    .steps ol {
-      padding-left: 18px;
-      margin: 6px 0 0;
-    }
-    .steps li {
-      margin-bottom: 4px;
-    }
-    footer {
-      margin-top: 8px;
-      text-align: center;
-      font-size: 11px;
-      color: #9ca3af;
+    .nav-item span.icon { font-size: 22px; }
+    .nav-item.active { color: #d4af37; }
+    .nav-item.active .icon-wrap {
+      background: rgba(212, 175, 55, 0.2);
+      border-radius: 12px;
+      padding: 4px 12px;
     }
   </style>
 </head>
 <body>
+  <div class="top-bar">Home / Order</div>
+
   <div class="page">
     <header>
-      <div class="brand">
-        <div class="brand-logo">AR</div>
-        <div>
-          <div class="brand-text-title">Street Bites AR</div>
-          <div class="brand-text-sub">Apna favourite food table par 3D me dekhein</div>
-        </div>
-      </div>
+      <div class="brand-logo">GB</div>
+      <div class="brand-text">The Grand Bistro AR</div>
       <div class="header-right">
         <button type="button" class="cart-btn" id="cart-btn" aria-label="Cart">
           🛒
           <span class="cart-badge hidden" id="cart-badge">0</span>
         </button>
-        <div class="tag">Live preview • Web AR</div>
       </div>
     </header>
 
-    <!-- Cart drawer -->
-    <div class="cart-overlay" id="cart-overlay"></div>
-    <div class="cart-drawer" id="cart-drawer">
-      <div class="cart-drawer-header">
-        <h2 class="cart-drawer-title">Your Cart</h2>
-        <button type="button" class="cart-close" id="cart-close">×</button>
+    <!-- Promo banner -->
+    <section class="promo-banner">
+      <div class="promo-text-wrap">
+        <div class="promo-label">Grand Bistro's</div>
+        <div class="promo-offer">60% OFF</div>
+        <div class="promo-sub">– New AR Experience Dish</div>
+        <a href="#order" class="promo-btn">Order Now</a>
       </div>
-      <div class="cart-drawer-body" id="cart-list">
-        <div class="cart-empty" id="cart-empty">Cart is empty. Add items from AR screen!</div>
-        <div id="cart-items"></div>
-      </div>
-      <div class="cart-drawer-footer">
-        <div class="cart-total">
-          <span>Total</span>
-          <span id="cart-total-amount">Rs 0</span>
-        </div>
-        <button type="button" class="place-order-btn" id="place-order-btn" disabled>Place Order</button>
-      </div>
+      <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=80" alt="Burger" class="promo-img">
+    </section>
+    <div class="carousel-dots">
+      <span class="active"></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
 
-    <main>
-      <section class="hero-text">
-        <div>
-          <h1 class="hero-title">
-            Choose your <span>food</span><br/>
-            then jump into AR.
-          </h1>
-          <p class="hero-sub">
-            Burger, pizza ya fries ka 3D model apni table ya floor par place karein.
-            Android Chrome ya iPhone Safari se open karein for best AR experience.
-          </p>
+    <!-- Category tabs: only Burger, Pizza, Fries are real -->
+    <div class="categories" id="categories">
+      <button type="button" class="cat-btn real active" data-filter="all">All Dishes</button>
+      <button type="button" class="cat-btn real" data-filter="burger">Burgers</button>
+      <button type="button" class="cat-btn real" data-filter="pizza">Pizza</button>
+      <button type="button" class="cat-btn real" data-filter="fries">Fries</button>
+      <button type="button" class="cat-btn dummy" disabled>Pasta</button>
+      <button type="button" class="cat-btn dummy" disabled>Steak</button>
+      <button type="button" class="cat-btn dummy" disabled>Salad</button>
+    </div>
+
+    <!-- Product grid: 3 real (burger, pizza, fries) + 3 dummy (pasta, steak, salad) -->
+    <div class="product-grid" id="product-grid">
+      <article class="product-card real" data-category="burger">
+        <div class="card-body">
+          <div class="card-icon">🍔</div>
+          <h3 class="card-title">Cheese Burger</h3>
+          <p class="card-desc">Classic beef burger with melty cheese.</p>
+          <div class="card-price">Rs 850</div>
         </div>
-
-        <div class="chips">
-          <span class="chip">Tap to open AR screen</span>
-          <span class="chip">Surface placement</span>
-          <span class="chip">No app install needed</span>
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80" alt="Cheese Burger" class="card-img">
+          <span class="card-badge">best for AR</span>
         </div>
+        <a href="arscreen.html?item=burger" class="card-ar-btn">View in AR &gt;</a>
+      </article>
 
-        <div class="menu-grid">
-          <article class="card">
-            <div class="card-top">
-              <div>
-                <div class="card-emoji">🍔</div>
-                <div class="card-title">Cheese Burger</div>
-                <div class="card-sub">Classic beef burger with melty cheese.</div>
-              </div>
-              <span class="badge">Best for AR demo</span>
-            </div>
-            <div class="price">Rs 850 (visual demo)</div>
-            <div class="card-actions">
-              <button class="ar-btn" onclick="window.location.href='arscreen.html?item=burger'">
-                <span>⬈</span> View Burger in AR
-              </button>
-            </div>
-          </article>
-
-          <article class="card">
-            <div class="card-top">
-              <div>
-                <div class="card-emoji">🍕</div>
-                <div class="card-title">Loaded Pizza</div>
-                <div class="card-sub">Cheesy slice straight on your table.</div>
-              </div>
-              <span class="badge">Table view</span>
-            </div>
-            <div class="price">Rs 1290 (visual demo)</div>
-            <div class="card-actions">
-              <button class="ar-btn" onclick="window.location.href='arscreen.html?item=pizza'">
-                <span>⬈</span> View Pizza in AR
-              </button>
-            </div>
-          </article>
-
-          <article class="card">
-            <div class="card-top">
-              <div>
-                <div class="card-emoji">🍟</div>
-                <div class="card-title">Crispy Fries</div>
-                <div class="card-sub">See the fries box in full 3D.</div>
-              </div>
-              <span class="badge">Quick preview</span>
-            </div>
-            <div class="price">Rs 490 (visual demo)</div>
-            <div class="card-actions">
-              <button class="ar-btn" onclick="window.location.href='arscreen.html?item=fries'">
-                <span>⬈</span> View Fries in AR
-              </button>
-            </div>
-          </article>
+      <article class="product-card real" data-category="pizza">
+        <div class="card-body">
+          <div class="card-icon">🍕</div>
+          <h3 class="card-title">Loaded Pizza</h3>
+          <p class="card-desc">Cheesy slice straight on your table.</p>
+          <div class="card-price">Rs 1290</div>
         </div>
-
-        <p class="note">
-          Abhi sab buttons same AR screen (`arscreen.html`) open karte hain. Baad me har item ka alag 3D model bhi link kar sakte ho.
-        </p>
-      </section>
-
-      <aside class="right-panel">
-        <div>
-          <h2 class="right-title">How to use AR menu</h2>
-          <p class="right-sub">
-            Simple flow: home page se food choose karein, phir AR screen se model ko surface par place karein.
-          </p>
-          <div class="steps">
-            <strong>Steps:</strong>
-            <ol>
-              <li>Is page ko Android Chrome ya iPhone Safari me open karein.</li>
-              <li>Apna favourite food item select karein.</li>
-              <li>AR screen open ho gi, wahan se “View in AR” dabayein.</li>
-              <li>Camera se flat surface scan karein &amp; model place kar dein.</li>
-            </ol>
-          </div>
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80" alt="Loaded Pizza" class="card-img">
+          <span class="card-badge">table view</span>
         </div>
-        <footer>
-          HTTPS hosting + AR supported device required for best experience.
-        </footer>
-      </aside>
-    </main>
+        <a href="arscreen.html?item=pizza" class="card-ar-btn">View in AR &gt;</a>
+      </article>
+
+      <article class="product-card real" data-category="fries">
+        <div class="card-body">
+          <div class="card-icon">🍟</div>
+          <h3 class="card-title">Crispy Fries</h3>
+          <p class="card-desc">See the fries in full 3D.</p>
+          <div class="card-price">Rs 490</div>
+        </div>
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80" alt="Crispy Fries" class="card-img">
+          <span class="card-badge">Quick view</span>
+        </div>
+        <a href="arscreen.html?item=fries" class="card-ar-btn">View in AR &gt;</a>
+      </article>
+
+      <article class="product-card dummy" data-category="dummy">
+        <div class="card-body">
+          <div class="card-icon">🍝</div>
+          <h3 class="card-title">Creamy Pasta</h3>
+          <p class="card-desc">Coming soon in AR.</p>
+          <div class="card-price">Rs 750</div>
+        </div>
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400&q=80" alt="Creamy Pasta" class="card-img">
+          <span class="card-badge">Coming soon</span>
+        </div>
+        <span class="card-ar-btn">View in AR &gt;</span>
+      </article>
+
+      <article class="product-card dummy" data-category="dummy">
+        <div class="card-body">
+          <div class="card-icon">🥩</div>
+          <h3 class="card-title">Grilled Steak</h3>
+          <p class="card-desc">Coming soon in AR.</p>
+          <div class="card-price">Rs 1890</div>
+        </div>
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1558030006-450675393462?w=400&q=80" alt="Grilled Steak" class="card-img">
+          <span class="card-badge">Coming soon</span>
+        </div>
+        <span class="card-ar-btn">View in AR &gt;</span>
+      </article>
+
+      <article class="product-card dummy" data-category="dummy">
+        <div class="card-body">
+          <div class="card-icon">🥗</div>
+          <h3 class="card-title">Fresh Salad</h3>
+          <p class="card-desc">Coming soon in AR.</p>
+          <div class="card-price">Rs 550</div>
+        </div>
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80" alt="Fresh Salad" class="card-img">
+          <span class="card-badge">Coming soon</span>
+        </div>
+        <span class="card-ar-btn">View in AR &gt;</span>
+      </article>
+    </div>
   </div>
+
+  <!-- Cart drawer -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-drawer-header">
+      <h2 class="cart-drawer-title">Your Cart</h2>
+      <button type="button" class="cart-close" id="cart-close">×</button>
+    </div>
+    <div class="cart-drawer-body" id="cart-list">
+      <div class="cart-empty" id="cart-empty">Cart is empty. Add items from AR screen!</div>
+      <div id="cart-items"></div>
+    </div>
+    <div class="cart-drawer-footer">
+      <div class="cart-total">
+        <span>Total</span>
+        <span id="cart-total-amount">Rs 0</span>
+      </div>
+      <button type="button" class="place-order-btn" id="place-order-btn" disabled>Place Order</button>
+    </div>
+  </div>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item active">
+      <span class="icon-wrap"><span class="icon">🏠</span></span>
+      Home
+    </a>
+    <button type="button" class="nav-item" aria-label="Search"><span class="icon">🔍</span> Search</button>
+    <button type="button" class="nav-item" aria-label="Notifications"><span class="icon">🔔</span> Notifications</button>
+    <button type="button" class="nav-item" id="nav-cart" aria-label="Cart"><span class="icon">🛒</span> Cart</button>
+    <button type="button" class="nav-item" aria-label="Profile"><span class="icon">👤</span> Profile</button>
+  </nav>
 
   <script>
     const CART_KEY = 'foodar_cart';
@@ -540,9 +530,7 @@
       try {
         const raw = localStorage.getItem(CART_KEY);
         return raw ? JSON.parse(raw) : [];
-      } catch (_) {
-        return [];
-      }
+      } catch (_) { return []; }
     }
     function saveCart(items) {
       localStorage.setItem(CART_KEY, JSON.stringify(items));
@@ -555,12 +543,10 @@
       const itemsEl = document.getElementById('cart-items');
       const totalEl = document.getElementById('cart-total-amount');
       const placeBtn = document.getElementById('place-order-btn');
-
       const count = cart.length;
       badge.textContent = count;
       badge.classList.toggle('hidden', count === 0);
       placeBtn.disabled = count === 0;
-
       if (cart.length === 0) {
         emptyEl.style.display = 'block';
         itemsEl.innerHTML = '';
@@ -568,7 +554,7 @@
         return;
       }
       emptyEl.style.display = 'none';
-      const total = cart.reduce((sum, i) => sum + (i.price || 0), 0);
+      const total = cart.reduce(function (sum, i) { return sum + (i.price || 0); }, 0);
       totalEl.textContent = 'Rs ' + total.toLocaleString();
       itemsEl.innerHTML = cart.map(function (i) {
         return '<div class="cart-item"><span class="cart-item-name">' + (i.emoji || '') + ' ' + (i.name || i.id) + '</span><span class="cart-item-price">Rs ' + (i.price || 0) + '</span></div>';
@@ -585,31 +571,21 @@
     document.getElementById('cart-btn').addEventListener('click', openCart);
     document.getElementById('cart-close').addEventListener('click', closeCart);
     document.getElementById('cart-overlay').addEventListener('click', closeCart);
+    document.getElementById('nav-cart').addEventListener('click', openCart);
     document.getElementById('place-order-btn').addEventListener('click', async function () {
       const cart = getCart();
       if (!cart.length) return;
-
       const tableNumber = prompt('Table number enter karein (e.g. 5, A2):');
-      if (!tableNumber) {
-        return;
-      }
-
-      const total = cart.reduce((sum, i) => sum + (i.price || 0), 0);
-
+      if (!tableNumber) return;
+      const total = cart.reduce(function (sum, i) { return sum + (i.price || 0); }, 0);
       try {
         const res = await fetch('/api/orders', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            tableNumber,
-            items: cart,
-            total
-          })
+          body: JSON.stringify({ tableNumber: tableNumber, items: cart, total: total })
         });
         const data = await res.json();
-        if (!res.ok || !data.ok) {
-          throw new Error(data.message || 'Order failed');
-        }
+        if (!res.ok || !data.ok) throw new Error(data.message || 'Order failed');
         alert('Order placed for table ' + tableNumber + '.');
         saveCart([]);
         closeCart();
@@ -618,6 +594,25 @@
         console.error(err);
       }
     });
+
+    // Category filter: burger, pizza, fries real; pasta, steak, salad dummy
+    var realCards = document.querySelectorAll('.product-card.real');
+    var dummyCards = document.querySelectorAll('.product-card.dummy');
+    document.getElementById('categories').addEventListener('click', function (e) {
+      var btn = e.target.closest('.cat-btn.real, .cat-btn[data-filter="all"]');
+      if (!btn || btn.disabled) return;
+      document.querySelectorAll('.cat-btn').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var filter = btn.getAttribute('data-filter');
+      realCards.forEach(function (card) {
+        var cat = card.getAttribute('data-category');
+        card.style.display = (filter === 'all' || cat === filter) ? '' : 'none';
+      });
+      dummyCards.forEach(function (card) {
+        card.style.display = filter === 'all' ? '' : 'none';
+      });
+    });
+
     updateCartUI();
   </script>
 </body>

@@ -2,98 +2,154 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Food AR Screen</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Item Detail – The Grand Bistro AR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <script type="module" src="https://unpkg.com/@google/model-viewer@3.4.0/dist/model-viewer.min.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #050816;
-      color: #f9fafb;
-      display: flex;
-      flex-direction: column;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 35%, #020617 100%);
+      color: #f1f5f9;
       min-height: 100vh;
+      padding-bottom: 24px;
     }
-    .wrapper {
-      max-width: 960px;
+    .page {
+      max-width: 480px;
       margin: 0 auto;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      flex: 1;
+      padding: 12px 16px;
     }
-    header {
+    .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 4px;
+      padding: 12px 0 16px;
     }
-    h1 {
+    .back-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.8);
+      color: #e2e8f0;
       font-size: 20px;
-      margin: 0;
-    }
-    .subtitle {
-      margin: 0;
-      font-size: 13px;
-      color: #9ca3af;
-    }
-    .back-link {
-      font-size: 13px;
-      color: #a5b4fc;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-decoration: none;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(129, 140, 248, 0.4);
-      background: rgba(15, 23, 42, 0.9);
     }
-    .back-link:hover {
-      background: rgba(30, 64, 175, 0.7);
+    .back-btn:hover { background: rgba(30, 41, 59, 0.9); }
+    .page-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin: 0;
     }
-    model-viewer {
+    .header-spacer { width: 40px; }
+    .product-image-wrap {
       width: 100%;
-      height: 420px;
+      margin: 16px 0 24px;
       border-radius: 16px;
       overflow: hidden;
-      background: radial-gradient(circle at top, #1f2937, #020617);
+      background: #1e293b;
     }
-    .actions {
+    .product-image-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+    .product-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin: 0 0 8px;
+    }
+    .product-desc {
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin: 0 0 20px;
+    }
+    .size-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #e2e8f0;
+      margin-bottom: 10px;
+    }
+    .size-btns {
       display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 8px;
+      gap: 10px;
       flex-wrap: wrap;
+      margin-bottom: 20px;
     }
-    button {
-      padding: 10px 18px;
+    .size-btn {
+      padding: 10px 20px;
       border-radius: 999px;
-      border: none;
+      border: 1px solid #334155;
+      background: #1e293b;
+      color: #e2e8f0;
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      display: inline-flex;
+    }
+    .size-btn.active {
+      border-color: #d4af37;
+      color: #d4af37;
+      background: rgba(212, 175, 55, 0.1);
+    }
+    .size-btn:hover:not(.active) {
+      border-color: #475569;
+    }
+    .total-price {
+      font-size: 18px;
+      font-weight: 600;
+      color: #f1f5f9;
+      margin-bottom: 24px;
+    }
+    .action-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .ar-experience-btn {
+      width: 100%;
+      padding: 16px 24px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #d4af37, #b8860b);
+      color: #0f172a;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      gap: 8px;
     }
-    #ar-btn {
-      background: #22c55e;
-      color: #022c22;
+    .ar-experience-btn:hover { opacity: 0.95; }
+    .ar-experience-btn .ar-icon {
+      font-size: 18px;
+      opacity: 0.9;
     }
-    #reset-btn {
-      background: #111827;
-      color: #e5e7eb;
+    .add-to-cart-btn {
+      width: 100%;
+      padding: 16px 24px;
+      border-radius: 14px;
+      border: 2px solid rgba(148, 163, 184, 0.5);
+      background: rgba(30, 41, 59, 0.8);
+      color: #e2e8f0;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
     }
-    #add-to-cart-btn {
-      background: linear-gradient(to right, #f97316, #ea580c);
-      color: #fff;
-    }
-    #add-to-cart-btn.added {
-      background: #16a34a;
+    .add-to-cart-btn:hover { background: rgba(51, 65, 85, 0.9); }
+    .add-to-cart-btn.added {
+      background: rgba(34, 197, 94, 0.2);
+      border-color: #22c55e;
+      color: #86efac;
     }
     .add-to-cart-msg {
       margin-top: 8px;
@@ -101,106 +157,157 @@
       color: #86efac;
       text-align: center;
     }
-    footer {
-      padding: 8px 0 12px;
-      text-align: center;
-      font-size: 11px;
-      color: #6b7280;
+    /* Hidden 3D viewer for AR */
+    #ar-viewer-section {
+      display: none;
+      margin-top: 24px;
+    }
+    #ar-viewer-section.visible { display: block; }
+    model-viewer {
+      width: 100%;
+      height: 360px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #1e293b;
     }
   </style>
 </head>
 <body>
-  <div class="wrapper">
-    <header>
-      <div>
-        <h1>Food Web AR Viewer</h1>
-        <p class="subtitle">Android Chrome ya iPhone Safari se open karein, phir "View in AR" dabayein.</p>
-      </div>
-      <a href="index.html" class="back-link">← Home pe wapas</a>
+  <div class="page">
+    <header class="header">
+      <a href="index.html" class="back-btn" aria-label="Back">&lt;</a>
+      <h1 class="page-title">Item Detail</h1>
+      <div class="header-spacer"></div>
     </header>
 
-    <!-- Yahan apna model.glb / model.usdz use karein -->
-    <model-viewer
-      id="viewer"
-      src="Burger.glb"
-      ios-src="mug.usdz"
-      ar
-      ar-modes="scene-viewer quick-look webxr"
-      camera-controls
-      auto-rotate
-      shadow-intensity="1"
-      exposure="1"
-      environment-image="neutral"
-      alt="3D food model"
-    >
-    </model-viewer>
+    <div class="product-image-wrap">
+      <img id="product-img" src="" alt="">
+    </div>
 
-    <div class="actions">
-      <button id="ar-btn">
-        View in AR
+    <h2 class="product-name" id="product-name"></h2>
+    <p class="product-desc" id="product-desc"></p>
+
+    <div class="size-label">Size</div>
+    <div class="size-btns">
+      <button type="button" class="size-btn active" data-size="small">Small</button>
+      <button type="button" class="size-btn" data-size="large">Large</button>
+      <button type="button" class="size-btn" data-size="l">L</button>
+      <button type="button" class="size-btn" data-size="xxl">XXL</button>
+    </div>
+
+    <div class="total-price">Total: <span id="total-price">Rs 850</span></div>
+
+    <div class="action-btns">
+      <button type="button" class="ar-experience-btn" id="ar-btn">
+        Experience in AR
+        <span class="ar-icon">⊞</span>
       </button>
-      <button id="reset-btn">
-        Reset view
-      </button>
-      <button id="add-to-cart-btn">
-        Add to Cart
-      </button>
+      <button type="button" class="add-to-cart-btn" id="add-to-cart-btn">Add to Cart</button>
     </div>
     <p class="add-to-cart-msg" id="add-to-cart-msg" style="display: none;"></p>
-  </div>
 
-  <footer>
-    Agar AR na khule to ensure karein: HTTPS + Android Chrome ya iOS Safari + AR supported device.
-  </footer>
+    <div id="ar-viewer-section">
+      <model-viewer
+        id="viewer"
+        src="Burger.glb"
+        ar
+        ar-modes="scene-viewer quick-look webxr"
+        camera-controls
+        auto-rotate
+        shadow-intensity="1"
+        exposure="1"
+        environment-image="neutral"
+        alt="3D food model"
+      ></model-viewer>
+    </div>
+  </div>
 
   <script>
     const CART_KEY = 'foodar_cart';
     const ITEMS = {
-      burger: { id: 'burger', name: 'Cheese Burger', price: 850, emoji: '🍔', model: 'Burger.glb' },
-      pizza:  { id: 'pizza',  name: 'Loaded Pizza',  price: 1290, emoji: '🍕', model: 'Pizza.glb' },
-      fries: { id: 'fries',  name: 'Crispy Fries',  price: 490, emoji: '🍟', model: 'Fries.glb' }
+      burger: {
+        id: 'burger',
+        name: 'Cheese Chicken Burger',
+        desc: 'Double beef patty, signature meltable cheese, fresh lettuce, and Bistro special sauce. Perfected for AR display.',
+        price: 850,
+        emoji: '🍔',
+        model: 'Burger.glb',
+        image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80'
+      },
+      pizza: {
+        id: 'pizza',
+        name: 'Loaded Pizza',
+        desc: 'Cheesy slice straight on your table. Fresh mozzarella, tangy sauce, and premium toppings.',
+        price: 1290,
+        emoji: '🍕',
+        model: 'Pizza.glb',
+        image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80'
+      },
+      fries: {
+        id: 'fries',
+        name: 'Crispy Fries',
+        desc: 'Golden crispy fries, perfectly seasoned. See them in full 3D on your table.',
+        price: 490,
+        emoji: '🍟',
+        model: 'Fries.glb',
+        image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500&q=80'
+      }
     };
+
     const params = new URLSearchParams(window.location.search);
     const itemKey = (params.get('item') || 'burger').toLowerCase();
     const currentItem = ITEMS[itemKey] || ITEMS.burger;
 
-    const viewer = document.getElementById('viewer');
+    const productImg = document.getElementById('product-img');
+    const productName = document.getElementById('product-name');
+    const productDesc = document.getElementById('product-desc');
+    const totalPriceEl = document.getElementById('total-price');
     const arBtn = document.getElementById('ar-btn');
-    const resetBtn = document.getElementById('reset-btn');
     const addToCartBtn = document.getElementById('add-to-cart-btn');
     const addToCartMsg = document.getElementById('add-to-cart-msg');
+    const viewer = document.getElementById('viewer');
+    const arViewerSection = document.getElementById('ar-viewer-section');
 
-    // Select correct 3D model based on URL item (burger/pizza/fries)
-    if (currentItem && currentItem.model) {
+    productImg.src = currentItem.image;
+    productImg.alt = currentItem.name;
+    productName.textContent = currentItem.name;
+    productDesc.textContent = currentItem.desc;
+    totalPriceEl.textContent = 'Rs ' + currentItem.price;
+
+    if (currentItem.model) {
       viewer.src = currentItem.model;
     }
+
+    document.querySelectorAll('.size-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.size-btn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+      });
+    });
 
     function getCart() {
       try {
         const raw = localStorage.getItem(CART_KEY);
         return raw ? JSON.parse(raw) : [];
-      } catch (_) {
-        return [];
-      }
+      } catch (_) { return []; }
     }
     function saveCart(items) {
       localStorage.setItem(CART_KEY, JSON.stringify(items));
     }
 
-    arBtn.addEventListener('click', () => {
-      if (viewer.canActivateAR) {
-        viewer.activateAR();
-      } else {
-        alert('Is device/browser par AR available nahi hai.');
-      }
+    arBtn.addEventListener('click', function () {
+      arViewerSection.classList.add('visible');
+      arViewerSection.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(function () {
+        if (viewer.canActivateAR) {
+          viewer.activateAR();
+        } else {
+          alert('Is device/browser par AR available nahi hai. HTTPS + Android Chrome ya iOS Safari try karein.');
+        }
+      }, 300);
     });
 
-    resetBtn.addEventListener('click', () => {
-      viewer.cameraOrbit = 'auto';
-      viewer.cameraTarget = 'auto';
-    });
-
-    addToCartBtn.addEventListener('click', () => {
+    addToCartBtn.addEventListener('click', function () {
       const cart = getCart();
       cart.push({ id: currentItem.id, name: currentItem.name, price: currentItem.price, emoji: currentItem.emoji });
       saveCart(cart);
@@ -208,7 +315,7 @@
       addToCartBtn.classList.add('added');
       addToCartMsg.textContent = currentItem.emoji + ' ' + currentItem.name + ' cart me add ho gaya.';
       addToCartMsg.style.display = 'block';
-      setTimeout(() => {
+      setTimeout(function () {
         addToCartBtn.textContent = 'Add to Cart';
         addToCartBtn.classList.remove('added');
         addToCartMsg.style.display = 'none';
