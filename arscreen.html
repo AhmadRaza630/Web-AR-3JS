@@ -106,7 +106,50 @@
       font-size: 18px;
       font-weight: 600;
       color: #f1f5f9;
+      margin-bottom: 20px;
+    }
+    .model-size-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       margin-bottom: 24px;
+      padding: 12px 16px;
+      background: rgba(30, 41, 59, 0.6);
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    .model-size-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #e2e8f0;
+      flex: 1;
+    }
+    .model-size-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .model-size-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid #d4af37;
+      background: rgba(212, 175, 55, 0.15);
+      color: #d4af37;
+      font-size: 20px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .model-size-btn:hover { background: rgba(212, 175, 55, 0.25); }
+    .model-size-value {
+      min-width: 48px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #f1f5f9;
+      text-align: center;
     }
     .action-btns {
       display: flex;
@@ -194,6 +237,15 @@
 
     <div class="total-price">Total: <span id="total-price">Rs 850</span></div>
 
+    <div class="model-size-wrap">
+      <span class="model-size-label">AR Model Size</span>
+      <div class="model-size-controls">
+        <button type="button" class="model-size-btn" id="size-minus" aria-label="Decrease size">−</button>
+        <span class="model-size-value" id="size-value">0.3</span>
+        <button type="button" class="model-size-btn" id="size-plus" aria-label="Increase size">+</button>
+      </div>
+    </div>
+
     <div class="action-btns">
       <button type="button" class="ar-experience-btn" id="ar-btn">
         Experience in AR
@@ -214,7 +266,8 @@
         price: 850,
         emoji: '🍔',
         model: 'Burger.glb',
-        image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80'
+        image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80',
+        defaultScale: 0.25
       },
       pizza: {
         id: 'pizza',
@@ -223,7 +276,8 @@
         price: 1290,
         emoji: '🍕',
         model: 'Pizza.glb',
-        image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80'
+        image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80',
+        defaultScale: 0.5
       },
       fries: {
         id: 'fries',
@@ -232,7 +286,8 @@
         price: 490,
         emoji: '🍟',
         model: 'Fries.glb',
-        image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500&q=80'
+        image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500&q=80',
+        defaultScale: 0.5
       }
     };
 
@@ -247,6 +302,31 @@
     const addToCartBtn = document.getElementById('add-to-cart-btn');
     const addToCartMsg = document.getElementById('add-to-cart-msg');
     const viewer = document.getElementById('viewer');
+    const sizeMinusBtn = document.getElementById('size-minus');
+    const sizePlusBtn = document.getElementById('size-plus');
+    const sizeValueEl = document.getElementById('size-value');
+
+    var modelScale = currentItem.defaultScale !== undefined ? currentItem.defaultScale : 0.5;
+    var scaleMin = 0.1;
+    var scaleMax = 2;
+    var scaleStep = 0.05;
+
+    function applyScale() {
+      var s = modelScale.toFixed(2);
+      var scaleStr = s + ' ' + s + ' ' + s;
+      viewer.setAttribute('scale', scaleStr);
+      sizeValueEl.textContent = s;
+      if (viewer.updateFraming) viewer.updateFraming();
+    }
+
+    sizeMinusBtn.addEventListener('click', function () {
+      modelScale = Math.max(scaleMin, modelScale - scaleStep);
+      applyScale();
+    });
+    sizePlusBtn.addEventListener('click', function () {
+      modelScale = Math.min(scaleMax, modelScale + scaleStep);
+      applyScale();
+    });
 
     productName.textContent = currentItem.name;
     productDesc.textContent = currentItem.desc;
@@ -255,6 +335,8 @@
     if (currentItem.model) {
       viewer.src = currentItem.model;
     }
+    applyScale();
+    viewer.addEventListener('load', function () { applyScale(); });
 
     document.querySelectorAll('.size-btn').forEach(function (btn) {
       btn.addEventListener('click', function () {
