@@ -358,10 +358,47 @@
       border-radius: 12px;
       padding: 4px 12px;
     }
+    .order-status-banner {
+      display: none;
+      padding: 10px 16px;
+      margin: 0 16px 12px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+      background: rgba(30, 41, 59, 0.95);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-radius: 12px;
+      font-size: 13px;
+      color: #e2e8f0;
+    }
+    .order-status-banner.visible { display: block; }
+    .order-status-banner strong { color: #d4af37; }
+    .user-toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      padding: 12px 18px;
+      border-radius: 12px;
+      background: #0f172a;
+      color: #f1f5f9;
+      font-size: 13px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+      max-width: 90%;
+    }
+    .user-toast.show { opacity: 1; }
   </style>
 </head>
 <body>
   <div class="top-bar">Home / Order</div>
+
+  <div class="order-status-banner" id="order-status-banner">
+    <strong>Order #<span id="order-status-id"></span></strong> (Table <span id="order-status-table"></span>) – Stage: <span id="order-status-stage">—</span>
+  </div>
 
   <div class="page">
     <header>
@@ -524,8 +561,22 @@
     <button type="button" class="nav-item" aria-label="Profile"><span class="icon">👤</span> Profile</button>
   </nav>
 
+  <div class="user-toast" id="user-toast"></div>
+
   <script>
     const CART_KEY = 'foodar_cart';
+    const LAST_ORDER_KEY = 'foodar_last_order';
+
+    function getLastOrder() {
+      try {
+        const raw = localStorage.getItem(LAST_ORDER_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch (_) { return null; }
+    }
+    function setLastOrder(orderId, tableNumber) {
+      localStorage.setItem(LAST_ORDER_KEY, JSON.stringify({ orderId: orderId, tableNumber: tableNumber }));
+    }
+
     function getCart() {
       try {
         const raw = localStorage.getItem(CART_KEY);
@@ -586,14 +637,92 @@
         });
         const data = await res.json();
         if (!res.ok || !data.ok) throw new Error(data.message || 'Order failed');
-        alert('Order placed for table ' + tableNumber + '.');
+        setLastOrder(data.order.id, data.order.tableNumber);
+        showUserToast('Order placed! Table ' + data.order.tableNumber);
         saveCart([]);
         closeCart();
+        updateOrderStatusBanner();
+        startOrderStatusPolling();
       } catch (err) {
         alert('Order place nahi ho saka. Thori dair baad try karein.');
         console.error(err);
       }
     });
+
+    function showUserToast(msg) {
+      var el = document.getElementById('user-toast');
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(function () { el.classList.remove('show'); }, 3000);
+    }
+
+    function statusLabel(s) {
+      var v = (s || '').toLowerCase();
+      if (v === 'pending') return 'New';
+      if (v === 'in_process') return 'In Process';
+      if (v === 'delivered') return 'Delivered';
+      if (v === 'completed' || v === 'done') return 'Completed';
+      return s || '—';
+    }
+
+    function statusNotifyMsg(s) {
+      var v = (s || '').toLowerCase();
+      if (v === 'in_process') return 'Aapka order ab In Process hai.';
+      if (v === 'delivered') return 'Aapka order deliver ho gaya!';
+      if (v === 'completed' || v === 'done') return 'Order complete. Thank you!';
+      return 'Order stage: ' + statusLabel(s);
+    }
+
+    var orderStatusPollTimer = null;
+    var lastSeenOrderStatus = null;
+
+    function updateOrderStatusBanner() {
+      var last = getLastOrder();
+      var banner = document.getElementById('order-status-banner');
+      var idEl = document.getElementById('order-status-id');
+      var tableEl = document.getElementById('order-status-table');
+      var stageEl = document.getElementById('order-status-stage');
+      if (!last || !banner || !idEl || !tableEl || !stageEl) return;
+      banner.classList.add('visible');
+      idEl.textContent = last.orderId;
+      tableEl.textContent = last.tableNumber;
+      stageEl.textContent = '…';
+    }
+
+    function pollOrderStatus() {
+      var last = getLastOrder();
+      if (!last || !last.orderId) return;
+      fetch('/api/orders/' + last.orderId)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data.ok || !data.order) return;
+          var order = data.order;
+          var idEl = document.getElementById('order-status-id');
+          var tableEl = document.getElementById('order-status-table');
+          var stageEl = document.getElementById('order-status-stage');
+          if (idEl) idEl.textContent = order.id;
+          if (tableEl) tableEl.textContent = order.tableNumber;
+          if (stageEl) stageEl.textContent = statusLabel(order.status);
+          if (lastSeenOrderStatus !== null && lastSeenOrderStatus !== order.status) {
+            showUserToast(statusNotifyMsg(order.status));
+          }
+          lastSeenOrderStatus = order.status;
+        })
+        .catch(function () {});
+    }
+
+    function startOrderStatusPolling() {
+      if (orderStatusPollTimer) clearInterval(orderStatusPollTimer);
+      pollOrderStatus();
+      orderStatusPollTimer = setInterval(pollOrderStatus, 8000);
+    }
+
+    var last = getLastOrder();
+    if (last && last.orderId) {
+      updateOrderStatusBanner();
+      startOrderStatusPolling();
+    }
 
     // Category filter: burger, pizza, fries real; pasta, steak, salad dummy
     var realCards = document.querySelectorAll('.product-card.real');

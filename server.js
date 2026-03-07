@@ -43,6 +43,30 @@ app.get('/api/orders', (req, res) => {
   res.json({ ok: true, orders });
 });
 
+// Get single order (for user status polling)
+app.get('/api/orders/:id', (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const order = orders.find(o => o.id === id);
+  if (!order) return res.status(404).json({ ok: false, message: 'Order not found' });
+  res.json({ ok: true, order });
+});
+
+// Update order status (pending → in_process → delivered → completed)
+app.patch('/api/orders/:id', (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const { status } = req.body || {};
+  const allowed = ['pending', 'in_process', 'delivered', 'completed'];
+  if (!allowed.includes(status)) {
+    return res.status(400).json({ ok: false, message: 'Invalid status' });
+  }
+  const order = orders.find(o => o.id === id);
+  if (!order) return res.status(404).json({ ok: false, message: 'Order not found' });
+  order.status = status;
+  order.updatedAt = new Date().toISOString();
+  console.log('Order updated:', order.id, status);
+  res.json({ ok: true, order });
+});
+
 // Admin dashboard (SPA-style) with real Orders + dummy sections
 app.get('/admin', (req, res) => {
   res.send(`
@@ -284,7 +308,48 @@ app.get('/admin', (req, res) => {
       font-size: 11px;
     }
     .status-chip.pending { background: #fef3c7; color: #b45309; }
+    .status-chip.in_process { background: #fef3c7; color: #b45309; }
+    .status-chip.delivered { background: #dcfce7; color: #15803d; }
+    .status-chip.completed { background: #e5e7eb; color: #374151; }
     .status-chip.done { background: #dcfce7; color: #15803d; }
+    .order-card-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .order-card-btn {
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .order-card-btn.next {
+      background: #f97316;
+      color: #fff;
+    }
+    .order-card-btn.next:hover { opacity: 0.9; }
+    .toast-wrap {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      pointer-events: none;
+    }
+    .toast {
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: #111827;
+      color: #f9fafb;
+      font-size: 13px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .toast.show { opacity: 1; }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -537,7 +602,9 @@ app.get('/admin', (req, res) => {
       </section>
     </main>
   </div>
-
+  <div class="toast-wrap" id="toast-wrap">
+    <div class="toast" id="admin-toast"></div>
+  </div>
   <script>
     const navButtons = document.querySelectorAll('.nav-item-btn');
     const sections = {
@@ -605,18 +672,34 @@ app.get('/admin', (req, res) => {
     function groupByStatus(orders) {
       const columns = { pending: [], inprocess: [], delivered: [], completed: [] };
       orders.forEach(o => {
-        const status = (o.status || 'pending').toLowerCase();
-        if (status === 'done' || status === 'completed') {
+        const s = (o.status || 'pending').toLowerCase();
+        if (s === 'completed' || s === 'done') {
           columns.completed.push(o);
-        } else if (status === 'delivered') {
+        } else if (s === 'delivered') {
           columns.delivered.push(o);
-        } else if (status === 'in process' || status === 'in_process') {
+        } else if (s === 'in_process' || s === 'in process') {
           columns.inprocess.push(o);
         } else {
           columns.pending.push(o);
         }
       });
       return columns;
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById('admin-toast');
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2500);
+    }
+
+    function getNextStatus(current) {
+      const s = (current || 'pending').toLowerCase();
+      if (s === 'pending') return { status: 'in_process', label: 'In Process' };
+      if (s === 'in_process') return { status: 'delivered', label: 'Delivered' };
+      if (s === 'delivered') return { status: 'completed', label: 'Completed' };
+      return null;
     }
 
     function renderOrdersBoard(orders) {
@@ -633,12 +716,21 @@ app.get('/admin', (req, res) => {
             .map(i => (i.emoji || '') + ' ' + (i.name || i.id))
             .join(', ');
           const created = new Date(o.createdAt).toLocaleTimeString();
-          const statusClass = (o.status || '').toLowerCase() === 'done' ? 'done' : 'pending';
+          const statusVal = o.status || 'pending';
+          const statusClass = statusVal.toLowerCase().replace(' ', '_');
+          const next = getNextStatus(statusVal);
+          let actions = '';
+          if (next) {
+            actions = '<div class="order-card-actions">' +
+              '<button type="button" class="order-card-btn next" data-order-id="' + o.id + '" data-next-status="' + next.status + '" data-next-label="' + next.label + '">' + next.label + '</button>' +
+              '</div>';
+          }
           return '<div class="order-card">' +
             '<div class="order-card-header"><span>Table ' + o.tableNumber + '</span><span>#' + o.id + '</span></div>' +
             '<div class="order-card-items">' + itemsText + '</div>' +
             '<div class="order-card-footer"><span>' + created + '</span>' +
-            '<span class="status-chip ' + statusClass + '">' + (o.status || 'pending') + '</span></div>' +
+            '<span class="status-chip ' + statusClass + '">' + statusVal + '</span></div>' +
+            actions +
             '</div>';
         }).join('');
         return '<div><div class="order-column-title ' + className + '">' + label +
@@ -666,22 +758,46 @@ app.get('/admin', (req, res) => {
           .map(i => (i.emoji || '') + ' ' + (i.name || i.id))
           .join(', ');
         const created = new Date(o.createdAt).toLocaleTimeString();
+        const statusVal = o.status || 'pending';
         return '<tr>' +
           '<td>#' + o.id + '</td>' +
           '<td><span class="badge">Table ' + o.tableNumber + '</span></td>' +
           '<td>' + itemsText + '</td>' +
           '<td>Rs ' + (o.total || 0) + '</td>' +
+          '<td><span class="status-chip ' + (statusVal.toLowerCase().replace(' ', '_')) + '">' + statusVal + '</span></td>' +
           '<td class="muted">' + created + '</td>' +
         '</tr>';
       }).join('');
       root.innerHTML =
         '<table><thead><tr>' +
-        '<th>ID</th><th>Table</th><th>Items</th><th>Total</th><th>Time</th>' +
+        '<th>ID</th><th>Table</th><th>Items</th><th>Total</th><th>Status</th><th>Time</th>' +
         '</tr></thead><tbody>' + rows + '</tbody></table>';
     }
 
     fetchOrders();
     setInterval(fetchOrders, 5000);
+
+    document.getElementById('orders-board').addEventListener('click', async function (e) {
+      const btn = e.target.closest('.order-card-btn.next');
+      if (!btn) return;
+      const id = btn.getAttribute('data-order-id');
+      const nextStatus = btn.getAttribute('data-next-status');
+      const nextLabel = btn.getAttribute('data-next-label');
+      if (!id || !nextStatus) return;
+      try {
+        const res = await fetch('/api/orders/' + id, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: nextStatus })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.message || 'Failed');
+        showToast('Order #' + id + ' → ' + nextLabel);
+        fetchOrders();
+      } catch (err) {
+        showToast('Update failed. Try again.');
+      }
+    });
   </script>
 </body>
 </html>
