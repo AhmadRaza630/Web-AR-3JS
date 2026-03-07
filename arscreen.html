@@ -48,18 +48,17 @@
       margin: 0;
     }
     .header-spacer { width: 40px; }
-    .product-image-wrap {
+    .product-model-wrap {
       width: 100%;
       margin: 16px 0 24px;
       border-radius: 16px;
       overflow: hidden;
       background: #1e293b;
     }
-    .product-image-wrap img {
+    .product-model-wrap model-viewer {
       width: 100%;
-      height: auto;
+      height: 280px;
       display: block;
-      object-fit: cover;
     }
     .product-name {
       font-size: 22px;
@@ -157,20 +156,7 @@
       color: #86efac;
       text-align: center;
     }
-    /* Hidden 3D viewer for AR */
-    #ar-viewer-section {
-      display: none;
-      margin-top: 24px;
-    }
-    #ar-viewer-section.visible { display: block; }
-    model-viewer {
-      width: 100%;
-      height: 360px;
-      border-radius: 16px;
-      overflow: hidden;
-      background: #1e293b;
-    }
-  </style>
+      </style>
 </head>
 <body>
   <div class="page">
@@ -180,8 +166,19 @@
       <div class="header-spacer"></div>
     </header>
 
-    <div class="product-image-wrap">
-      <img id="product-img" src="" alt="">
+    <div class="product-model-wrap">
+      <model-viewer
+        id="viewer"
+        src="Burger.glb"
+        ar
+        ar-modes="scene-viewer quick-look webxr"
+        camera-controls
+        auto-rotate
+        shadow-intensity="1"
+        exposure="1"
+        environment-image="neutral"
+        alt="3D food model"
+      ></model-viewer>
     </div>
 
     <h2 class="product-name" id="product-name"></h2>
@@ -205,21 +202,6 @@
       <button type="button" class="add-to-cart-btn" id="add-to-cart-btn">Add to Cart</button>
     </div>
     <p class="add-to-cart-msg" id="add-to-cart-msg" style="display: none;"></p>
-
-    <div id="ar-viewer-section">
-      <model-viewer
-        id="viewer"
-        src="Burger.glb"
-        ar
-        ar-modes="scene-viewer quick-look webxr"
-        camera-controls
-        auto-rotate
-        shadow-intensity="1"
-        exposure="1"
-        environment-image="neutral"
-        alt="3D food model"
-      ></model-viewer>
-    </div>
   </div>
 
   <script>
@@ -258,7 +240,6 @@
     const itemKey = (params.get('item') || 'burger').toLowerCase();
     const currentItem = ITEMS[itemKey] || ITEMS.burger;
 
-    const productImg = document.getElementById('product-img');
     const productName = document.getElementById('product-name');
     const productDesc = document.getElementById('product-desc');
     const totalPriceEl = document.getElementById('total-price');
@@ -266,10 +247,7 @@
     const addToCartBtn = document.getElementById('add-to-cart-btn');
     const addToCartMsg = document.getElementById('add-to-cart-msg');
     const viewer = document.getElementById('viewer');
-    const arViewerSection = document.getElementById('ar-viewer-section');
 
-    productImg.src = currentItem.image;
-    productImg.alt = currentItem.name;
     productName.textContent = currentItem.name;
     productDesc.textContent = currentItem.desc;
     totalPriceEl.textContent = 'Rs ' + currentItem.price;
@@ -296,15 +274,11 @@
     }
 
     arBtn.addEventListener('click', function () {
-      arViewerSection.classList.add('visible');
-      arViewerSection.scrollIntoView({ behavior: 'smooth' });
-      setTimeout(function () {
-        if (viewer.canActivateAR) {
-          viewer.activateAR();
-        } else {
-          alert('Is device/browser par AR available nahi hai. HTTPS + Android Chrome ya iOS Safari try karein.');
-        }
-      }, 300);
+      if (viewer.canActivateAR) {
+        viewer.activateAR();
+      } else {
+        alert('Is device/browser par AR available nahi hai. HTTPS + Android Chrome ya iOS Safari try karein.');
+      }
     });
 
     addToCartBtn.addEventListener('click', function () {
