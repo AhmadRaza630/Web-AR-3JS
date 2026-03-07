@@ -396,9 +396,9 @@ app.get('/admin', (req, res) => {
       position: fixed;
       bottom: 16px;
       right: 16px;
-      width: 44px;
-      height: 44px;
-      opacity: 0.35;
+      width: 100px;
+      height: 100px;
+      opacity: 1;
       pointer-events: none;
       z-index: 100;
     }
