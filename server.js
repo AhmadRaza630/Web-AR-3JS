@@ -416,7 +416,7 @@ app.get('/admin', (req, res) => {
   <div class="layout">
     <aside class="sidebar">
       <div class="sidebar-logo">
-        <div class="sidebar-logo-badge">BA</div>
+        <div class="sidebar-logo-badge">IXR</div>
         <div class="sidebar-logo-text">Innovify XR</div>
       </div>
       <div class="nav-section-title">Main</div>
