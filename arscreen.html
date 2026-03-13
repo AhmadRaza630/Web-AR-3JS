@@ -324,6 +324,66 @@
     const sizePlusBtn = document.getElementById('size-plus');
     const sizeValueEl = document.getElementById('size-value');
 
+    // Torch (flashlight) control state
+    let torchStream = null;
+    let torchTrack = null;
+
+    async function enableTorch() {
+      if (!('mediaDevices' in navigator)) return;
+      try {
+        // If already on, skip
+        if (torchTrack && torchTrack.readyState === 'live') {
+          try {
+            await torchTrack.applyConstraints({ advanced: [{ torch: true }] });
+          } catch (_) {}
+          return;
+        }
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: 'environment' },
+            advanced: [{ torch: true }]
+          }
+        });
+
+        const [track] = stream.getVideoTracks();
+        if (!track) {
+          stream.getTracks().forEach(t => t.stop());
+          return;
+        }
+
+        try {
+          await track.applyConstraints({ advanced: [{ torch: true }] });
+        } catch (e) {
+          // Torch not supported, just stop stream
+          stream.getTracks().forEach(t => t.stop());
+          return;
+        }
+
+        torchStream = stream;
+        torchTrack = track;
+      } catch (e) {
+        // Permission denied or not supported – ignore silently
+      }
+    }
+
+    async function disableTorch() {
+      try {
+        if (torchTrack) {
+          try {
+            await torchTrack.applyConstraints({ advanced: [{ torch: false }] });
+          } catch (_) {}
+          torchTrack.stop();
+        }
+        if (torchStream) {
+          torchStream.getTracks().forEach(t => t.stop());
+        }
+      } finally {
+        torchTrack = null;
+        torchStream = null;
+      }
+    }
+
     var modelScale = currentItem.defaultScale !== undefined ? currentItem.defaultScale : 0.5;
     var scaleMin = 0.1;
     var scaleMax = 2;
@@ -355,6 +415,21 @@
     }
     applyScale();
     viewer.addEventListener('load', function () { applyScale(); });
+
+    // AR screen par enter/exit hote hi torch control karein
+    viewer.addEventListener('ar-status', function (event) {
+      const status = event.detail && event.detail.status;
+      if (status === 'session-started') {
+        // AR start hua – flashlight on karne ki koshish
+        enableTorch();
+      } else if (status === 'not-presenting') {
+        // AR se bahar aaye – flashlight off
+        disableTorch();
+      }
+    });
+
+    window.addEventListener('pagehide', disableTorch);
+    window.addEventListener('beforeunload', disableTorch);
 
     document.querySelectorAll('.size-btn').forEach(function (btn) {
       btn.addEventListener('click', function () {
