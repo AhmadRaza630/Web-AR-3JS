@@ -283,9 +283,10 @@
         desc: 'Double beef patty, signature meltable cheese, fresh lettuce, and Bistro special sauce. Perfected for AR display.',
         price: 850,
         emoji: '🍔',
-        model: 'Burger.glb',
+        modelGlb: 'Burger.glb',
+        modelUsdz: 'Burger.usdz',
         image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80',
-        defaultScale: 0.002
+        defaultScale: 0.5
       },
       pizza: {
         id: 'pizza',
@@ -293,7 +294,8 @@
         desc: 'Cheesy slice straight on your table. Fresh mozzarella, tangy sauce, and premium toppings.',
         price: 1290,
         emoji: '🍕',
-        model: 'Pizza.glb',
+        modelGlb: 'Pizza.glb',
+        modelUsdz: 'Pizza.usdz',
         image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80',
         defaultScale: 0.5
       },
@@ -303,7 +305,8 @@
         desc: 'Golden crispy fries, perfectly seasoned. See them in full 3D on your table.',
         price: 490,
         emoji: '🍟',
-        model: 'Fries.glb',
+        modelGlb: 'Fries.glb',
+        modelUsdz: 'Fries.usdz',
         image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500&q=80',
         defaultScale: 0.5
       }
@@ -410,9 +413,11 @@
     productDesc.textContent = currentItem.desc;
     totalPriceEl.textContent = 'Rs ' + currentItem.price;
 
-    if (currentItem.model) {
-      viewer.src = currentItem.model;
-    }
+    // Model formats:
+    // - Android/desktop: GLB via `src`
+    // - iOS Quick Look: USDZ via `ios-src`
+    if (currentItem.modelGlb) viewer.setAttribute('src', currentItem.modelGlb);
+    if (currentItem.modelUsdz) viewer.setAttribute('ios-src', currentItem.modelUsdz);
     applyScale();
     viewer.addEventListener('load', function () { applyScale(); });
 
